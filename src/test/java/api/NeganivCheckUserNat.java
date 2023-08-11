@@ -1,6 +1,8 @@
 package api;
 
+import api.model.Result;
 import api.model.UserInfo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -12,11 +14,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
-public class NegativeTestCheckUsers {
-
+public class NeganivCheckUserNat {
     @BeforeClass
     public void prepare() throws IOException {
         System.getProperties().load(ClassLoader.getSystemResourceAsStream("my.properties"));
@@ -37,30 +39,27 @@ public class NegativeTestCheckUsers {
         RestAssured.filters(new ResponseLoggingFilter());
     }
 
-    @DataProvider(name = "resultCount")
-    public Object [] [] negativeData () {
+    @DataProvider(name = "resultNat")
+    public Object [] [] positiveData () {
         return new Object [] [] {
-                {"results", "-1"},
-                {"results", "0"},
-                {"results", "-10"},
+                {"nat", "146"},
+                {"gender", "us"},
         };
     }
 
 
-    @Test(dataProvider = "resultCount")
-    public void checkUsers(String result, String date) throws IOException {
-
-        //TODO так как нет документации предполагаю должна быть ошибка 400 или 422
-        UserInfo res = given()
+    @Test(dataProvider = "resultNat")
+    public void checkUser(String nat, String date){
+        UserInfo user = given()
                 .spec(RestAssured.requestSpecification)
                 .contentType(ContentType.JSON)
-                .param(result, date)
+                .param(nat, date)
                 .when()
                 .get("/api/")
                 .then()
                 .statusCode(400)
                 .extract()
                 .as(UserInfo.class);
-    }
 
+    }
 }
